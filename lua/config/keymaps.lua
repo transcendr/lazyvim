@@ -46,3 +46,10 @@ vim.api.nvim_set_keymap(
   "y<cmd>lua require('config.functions').open_selected_text_in_vsplit()<CR>",
   { noremap = true, silent = true }
 )
+
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader><C-m>",
+  "<cmd>lua require('config.functions').toggle_ai_model()<CR>",
+  { noremap = true, silent = true }
+)

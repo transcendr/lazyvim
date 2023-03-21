@@ -1,3 +1,20 @@
+-- local Split = require("nui.split")
+-- local event = require("nui.utils.autocmd").event
+
+-- local split = Split({
+--   relative = "editor",
+--   position = "right",
+--   size = "50%",
+-- })
+
+-- -- mount/open the component
+-- split:mount()
+
+-- -- unmount component when cursor leaves buffer
+-- split:on(event.BufLeave, function()
+--   split:unmount()
+-- end)
+
 local function open_selected_or_yanked_text_in_vsplit()
   -- Get the selected text or the most recently yanked text
   local start_line, end_line = vim.fn.getpos("'<")[2], vim.fn.getpos("'>")[2]
@@ -25,4 +42,19 @@ local function open_selected_or_yanked_text_in_vsplit()
   vim.cmd("normal ggVG")
 end
 
-return { open_selected_text_in_vsplit = open_selected_or_yanked_text_in_vsplit }
+local function ToggleAIModel()
+  if vim.g.ai_model == "gpt-3.5-turbo" then
+    vim.g.ai_model = "gpt-4"
+    vim.notify("AI model set to gpt-4", "INFO", {})
+  else
+    vim.g.ai_model = "gpt-3.5-turbo"
+    vim.notify("AI model set to gpt-3.5-turbo", "INFO", {})
+  end
+end
+
+vim.api.nvim_create_user_command("ToggleAIModel", ToggleAIModel, { nargs = 0 })
+
+return {
+  open_selected_text_in_vsplit = open_selected_or_yanked_text_in_vsplit,
+  toggle_ai_model = ToggleAIModel,
+}
