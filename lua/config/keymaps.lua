@@ -5,6 +5,44 @@
 -- Escape from insert mode when pressing jj
 vim.keymap.set("i", "jj", "<ESC>", { noremap = true, silent = true, desc = "Escape from insert mode" })
 
--- Leader b, w saves the current buffer
-vim.keymap.set("n", "<leader>bw", ":w<CR>", { noremap = true, silent = true, desc = "Save current buffer" })
-vim.keymap.set("n", "<leader>bW", ":wa<CR>", { noremap = true, silent = true, desc = "Save all buffers" })
+-- leader b, w saves the current buffer
+vim.keymap.set("n", "<leader>bw", ":w<cr>", { noremap = true, silent = true, desc = "save current buffer" })
+vim.keymap.set("n", "<leader>bw", ":wa<cr>", { noremap = true, silent = true, desc = "save all buffers" })
+
+-- Search
+vim.keymap.set(
+  "n",
+  "<leader>fg",
+  ":Telescope live_grep<CR>",
+  { noremap = true, silent = true, desc = "Find text using Telescope" }
+)
+vim.keymap.set(
+  "n",
+  "<leader>fh",
+  ":Telescope help_tags<CR>",
+  { noremap = true, silent = true, desc = "Find help tags using Telescope" }
+)
+
+-- Windows
+vim.keymap.set("n", "<leader>vs", ":vsplit<CR>", { noremap = true, silent = true, desc = "Split window vertically" })
+vim.keymap.set(
+  "n",
+  "<leader><C-f>",
+  ":%s//gI<Left><Left><Left>",
+  { noremap = true, silent = true, desc = "Find and replace a word in the current buffer" }
+)
+vim.keymap.set("n", "<leader>w", ":w<CR>", { noremap = true, silent = true, desc = "Write the current buffer to disk" })
+
+-- require("config.functions")
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader><C-a>",
+  "<cmd>lua require('config.functions').open_selected_text_in_vsplit()<CR>",
+  { noremap = true, silent = true }
+)
+vim.api.nvim_set_keymap(
+  "v",
+  "<leader><C-a>",
+  "y<cmd>lua require('config.functions').open_selected_text_in_vsplit()<CR>",
+  { noremap = true, silent = true }
+)
