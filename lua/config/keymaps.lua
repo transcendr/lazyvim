@@ -4,6 +4,18 @@
 
 -- Escape from insert mode when pressing jj
 vim.keymap.set("i", "jj", "<ESC>", { noremap = true, silent = true, desc = "Escape from insert mode" })
+-- Delete the entire document text when pressing <leader>dd
+vim.keymap.set(
+  "n",
+  "<leader>dd",
+  --":%d<CR>",
+  "<cmd>lua require('config.functions').delete_buffer_if_empty()<CR>",
+  { noremap = true, silent = true, desc = "Delete the entire document text" }
+)
+-- Select the entire document text when pressing <leader>vv
+vim.keymap.set("n", "<leader>vv", "ggVG", { noremap = true, silent = true, desc = "Select the entire document text" })
+-- Copy the entire document text when pressing <leader>yy
+vim.keymap.set("n", "<leader>yy", "ggVGy", { noremap = true, silent = true, desc = "Copy the entire document text" })
 
 -- leader b, w saves the current buffer
 vim.keymap.set("n", "<leader>bw", ":w<cr>", { noremap = true, silent = true, desc = "save current buffer" })

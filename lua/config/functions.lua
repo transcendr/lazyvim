@@ -35,7 +35,7 @@ local function open_selected_or_yanked_text_in_vsplit()
   else
     -- paste the text
     vim.cmd("normal! p")
-    vim.cmd("1delete")
+    --vim.cmd("1delete")
   end
 
   -- Now select all text in the new buffer
@@ -52,9 +52,45 @@ local function ToggleAIModel()
   end
 end
 
-vim.api.nvim_create_user_command("ToggleAIModel", ToggleAIModel, { nargs = 0 })
+vim.api.nvim_create_user_command("AIToggleModel", ToggleAIModel, { nargs = 0 })
+
+local function SetAIContext()
+  local context = vim.fn.input("Context: ")
+  vim.g.ai_context_before = context
+  vim.g.ai_context_after = context
+  vim.notify("AI context set to " .. context .. " equally", "INFO", {})
+end
+
+vim.api.nvim_create_user_command("AISetContext", SetAIContext, { nargs = 0 })
+
+local function SetAIContextI()
+  local context_before = vim.fn.input("Context before: ")
+  local context_after = vim.fn.input("Context after: ")
+  vim.g.ai_context_before = context_before
+  vim.g.ai_context_after = context_after
+  vim.notify("AI context set to " .. context_before .. " before and " .. context_after .. " after", "INFO", {})
+end
+
+vim.api.nvim_create_user_command("AISetContextI", SetAIContextI, { nargs = 0 })
+
+-- Function that: if the current buffer has text, deletes all text in the buffer, but if the current buffer has no text, deletes the current buffer and closes the window
+local function delete_buffer_if_empty()
+  local line_count = vim.fn.line("$")
+  if line_count == 1 and vim.fn.getline(1) == "" then
+    vim.cmd("bd!")
+  else
+    -- switch to normal mode
+    vim.cmd("normal! gg")
+    -- delete all text in the buffer (including the last line)
+    vim.cmd("normal! dG")
+    --vim.cmd("normal! 0ggvGVdd")
+  end
+end
 
 return {
   open_selected_text_in_vsplit = open_selected_or_yanked_text_in_vsplit,
   toggle_ai_model = ToggleAIModel,
+  set_ai_context = SetAIContext,
+  set_ai_context_i = SetAIContextI,
+  delete_buffer_if_empty = delete_buffer_if_empty,
 }
