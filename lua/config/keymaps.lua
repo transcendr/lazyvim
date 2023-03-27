@@ -19,7 +19,7 @@ vim.keymap.set("n", "<leader>yy", "ggVGy", { noremap = true, silent = true, desc
 
 -- leader b, w saves the current buffer
 vim.keymap.set("n", "<leader>bw", ":w<cr>", { noremap = true, silent = true, desc = "save current buffer" })
-vim.keymap.set("n", "<leader>bw", ":wa<cr>", { noremap = true, silent = true, desc = "save all buffers" })
+vim.keymap.set("n", "<leader>bW", ":wa<cr>", { noremap = true, silent = true, desc = "save all buffers" })
 
 -- Search
 vim.keymap.set(
@@ -65,3 +65,23 @@ vim.api.nvim_set_keymap(
   "<cmd>lua require('config.functions').toggle_ai_model()<CR>",
   { noremap = true, silent = true }
 )
+
+-- Run ":Neorg index" when pressing <leader><C-ni>
+vim.keymap.set("n", "<leader><C-n>i", ":Neorg index<CR>", { noremap = true, silent = true, desc = "Run :Neorg index" })
+-- Run ":Neorg return" when pressing <leader><C-nr>
+vim.keymap.set(
+  "n",
+  "<leader><C-n>r",
+  ":Neorg return<CR>",
+  { noremap = true, silent = true, desc = "Run :Neorg return" }
+)
+-- Run ":Neorg workspace" when pressing <leader><C-n>w
+vim.keymap.set(
+  "n",
+  "<leader><C-n>w",
+  ":Neorg workspace<CR>",
+  { noremap = true, silent = true, desc = "Run :Neorg workspace" }
+)
+
+-- Run "let @+=@:" when pressing <leader><C-y>
+vim.keymap.set("n", "<leader><C-y>", "let @+=@:", { noremap = true, silent = true, desc = "Run let @+=@:" })
