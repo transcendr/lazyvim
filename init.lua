@@ -27,6 +27,7 @@ require("flutter-tools").setup({
 }) -- use defaults
 
 -- NVR
+-- NOTE: You must install nvr-remote for this to work
 if vim.fn.executable("nvr") == 1 then
   vim.env.GIT_EDITOR = "nvr --remote-tab-wait +'set bufhidden=delete'"
 end

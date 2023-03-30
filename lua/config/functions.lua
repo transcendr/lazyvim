@@ -87,10 +87,35 @@ local function delete_buffer_if_empty()
   end
 end
 
+-- Opens a terminal in the directory of the current file in a new tab
+-- local function open_terminal_in_file_dir()
+--   -- Get the current file's directory
+--   local file_dir = vim.fn.expand("%:p:h")
+--   -- Open a new vertical split
+--   vim.cmd("vnew")
+--   -- compatible with zsh shell version:
+--   vim.cmd("term zsh -c 'cd " .. file_dir .. "; zsh'")
+-- end
+
+-- Opens a terminal in the directory of the current file in a new tab
+local function open_terminal_in_file_dir()
+  -- Get the current file's directory
+  local file_dir = vim.fn.expand("%:p:h")
+  -- Open a new vertical split
+  vim.cmd("vnew")
+  -- Set the working directory for the new terminal buffer
+  vim.cmd("tcd " .. file_dir)
+  -- compatible with zsh shell version:
+  vim.cmd("term zsh")
+end
+
+vim.api.nvim_create_user_command("OpenTerminalInFileDir", open_terminal_in_file_dir, { nargs = 0 })
+
 return {
   open_selected_text_in_vsplit = open_selected_or_yanked_text_in_vsplit,
   toggle_ai_model = ToggleAIModel,
   set_ai_context = SetAIContext,
   set_ai_context_i = SetAIContextI,
   delete_buffer_if_empty = delete_buffer_if_empty,
+  open_terminal_in_file_dir = open_terminal_in_file_dir,
 }

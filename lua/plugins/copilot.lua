@@ -25,7 +25,9 @@ return {
       debounce = 75,
       -- Setup the keymap for the suggestion feature.
       keymap = {
-        accept = "<S-CR>",
+        -- Conflicts with Zellij for some reason
+        --accept = "<S-CR>",
+        accept = "<CR><CR>",
         next = "<C-]>",
         prev = "<C-[>",
         dismiss = "<C-o>",
