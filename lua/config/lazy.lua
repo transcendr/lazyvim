@@ -2,7 +2,8 @@ local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   -- bootstrap lazy.nvim
   -- stylua: ignore
-  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
+  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable",
+    lazypath })
 end
 vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
 
@@ -14,6 +15,18 @@ require("lazy").setup({
     -- import any extras modules here
     { import = "lazyvim.plugins.extras.lang.typescript" },
     { import = "lazyvim.plugins.extras.lang.json" },
+    -- since `vim.tbl_deep_extend`, can only merge tables and not lists, the code above
+    -- would overwrite `ensure_installed` with the new value.
+    -- If you'd rather extend the default config, use the code below instead:
+    {
+      "nvim-treesitter/nvim-treesitter",
+      opts = function(_, opts)
+        -- add tsx and treesitter
+        vim.list_extend(opts.ensure_installed, {
+          "python",
+        })
+      end,
+    },
     { import = "lazyvim.plugins.extras.ui.mini-animate" },
     -- -- Copilot
     { import = "lazyvim.plugins.extras.coding.copilot" },
