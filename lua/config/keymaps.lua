@@ -34,15 +34,31 @@ vim.keymap.set(
   ":Telescope help_tags<CR>",
   { noremap = true, silent = true, desc = "Find help tags using Telescope" }
 )
-
--- Windows
-vim.keymap.set("n", "<leader>vs", ":vsplit<CR>", { noremap = true, silent = true, desc = "Split window vertically" })
 vim.keymap.set(
   "n",
-  "<leader><C-f>",
+  "<leader>sR",
   ":%s//gI<Left><Left><Left>",
   { noremap = true, silent = true, desc = "Find and replace a word in the current buffer" }
 )
+
+-- Movement
+-- Move to first character of line when pressing `gh`, in normal mode
+vim.keymap.set("n", "gh", "^", { noremap = true, silent = true, desc = "Move to first character of line" })
+-- Now in visual mode, pressing `gh` will move to first character of line
+vim.keymap.set("v", "gh", "^", { noremap = true, silent = true, desc = "Move to first character of line" })
+-- Move to last character of line when pressing `gl`, in normal mode
+vim.keymap.set("n", "gl", "$", { noremap = true, silent = true, desc = "Move to last character of line" })
+-- Now in visual mode, pressing `gl` will move to last character of line
+vim.keymap.set("v", "gl", "$", { noremap = true, silent = true, desc = "Move to last character of line" })
+-- Now in insert mode, pressing `gll` will move to last character of line
+vim.keymap.set("i", "gll", "<ESC>$a", { noremap = true, silent = true, desc = "Move to last character of line" })
+-- Now in insert mode, holding down `ghh` will move to first character of line
+vim.keymap.set("i", "ghh", "<ESC>^i", { noremap = true, silent = true, desc = "Move to first character of line" })
+-- Move the the last linge of the document when pressing `ge`, in normal mode
+vim.keymap.set("n", "ge", "G", { noremap = true, silent = true, desc = "Move to last line of document" })
+
+-- Windows
+vim.keymap.set("n", "<leader>vs", ":vsplit<CR>", { noremap = true, silent = true, desc = "Split window vertically" })
 vim.keymap.set("n", "<leader>w", ":w<CR>", { noremap = true, silent = true, desc = "Write the current buffer to disk" })
 
 -- require("config.functions")
