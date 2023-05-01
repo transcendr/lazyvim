@@ -4,13 +4,13 @@ return {
   opts = {
     load = {
       ["core.defaults"] = {},
-      ["core.norg.concealer"] = {
+      ["core.concealer"] = {
         config = {
           folds = false,
           icon_preset = "diamond",
         },
       },
-      ["core.norg.dirman"] = {
+      ["core.dirman"] = {
         config = {
           workspaces = {
             --tasks = "~/Google\\ Drive/My\\ Drive/Shared/Neorg/tasks",
