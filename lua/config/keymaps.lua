@@ -2,6 +2,10 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
+-- RSTLNE keymaps
+-- Ctrl + k to move down
+vim.keymap.set("n", "<C-k>", "j", { noremap = true, silent = true, desc = "Move down" })
+
 -- Escape from insert mode when pressing jj
 vim.keymap.set("i", "jj", "<ESC>", { noremap = true, silent = true, desc = "Escape from insert mode" })
 -- Delete the entire document text when pressing <leader>dd
@@ -100,4 +104,4 @@ vim.keymap.set(
 )
 
 -- Run "let @+=@:" when pressing <leader><C-y>
-vim.keymap.set("n", "<leader><C-y>", "let @+=@:", { noremap = true, silent = true, desc = "Run let @+=@:" })
+-- vim.keymap.set("n", "<leader><C-y>", "let @+=@:", { noremap = true, silent = true, desc = "Run let @+=@:" })
