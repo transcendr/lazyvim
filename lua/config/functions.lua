@@ -43,11 +43,11 @@ local function open_selected_or_yanked_text_in_vsplit()
 end
 
 local function ToggleAIModel()
-  if vim.g.ai_model == "gpt-3.5-turbo" then
+  if vim.g.ai_model == "gpt-3.5-turbo-16k" then
     vim.g.ai_model = "gpt-4"
     vim.notify("AI model set to gpt-4", "INFO", {})
   else
-    vim.g.ai_model = "gpt-3.5-turbo"
+    vim.g.ai_model = "gpt-3.5-turbo-16k"
     vim.notify("AI model set to gpt-3.5-turbo", "INFO", {})
   end
 end
