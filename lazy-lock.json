@@ -5,6 +5,7 @@
   "SchemaStore.nvim": { "branch": "main", "commit": "0682f56392ddc86cf5e6b2af76a63bc48ad4ed84" },
   "ai.vim": { "branch": "main", "commit": "26de0db6970762fe3db1cf3328b64b37dce8fa1b" },
   "alpha-nvim": { "branch": "main", "commit": "e4fc5e29b731bdf55d204c5c6a11dc3be70f3b65" },
+  "blame_line.nvim": { "branch": "master", "commit": "f77bd2d90b51c10eb70b36471f2207ae516fa84a" },
   "bufferline.nvim": { "branch": "main", "commit": "d24378edc14a675c820a303b4512af3bbc5761e9" },
   "catppuccin": { "branch": "main", "commit": "bfe91dfb3a19ffd4445e43611fcde68acbb3fed4" },
   "cmp-buffer": { "branch": "main", "commit": "3022dbc9166796b644a841a02de8dd1cc1d311fa" },
