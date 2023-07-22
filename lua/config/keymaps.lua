@@ -6,6 +6,10 @@
 -- Ctrl + k to move down
 vim.keymap.set("n", "<C-k>", "j", { noremap = true, silent = true, desc = "Move down" })
 
+-- Tabs
+vim.keymap.set("n", "<leader><tab>n", "<cmd>tabnext<cr>", { desc = "Next Tab", silent = true })
+vim.keymap.set("n", "<leader><tab>p", "<cmd>tabprevious<cr>", { desc = "Previous Tab", silent = true })
+
 -- Escape from insert mode when pressing jj
 vim.keymap.set("i", "jj", "<ESC>", { noremap = true, silent = true, desc = "Escape from insert mode" })
 -- Delete the entire document text when pressing <leader>dd
