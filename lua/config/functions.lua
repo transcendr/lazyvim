@@ -226,6 +226,8 @@ local function append_selected_text_to_a_register()
   -- Get the start and end positions of the selected text
   local start_pos = vim.fn.getpos("'<")
   local end_pos = vim.fn.getpos("'>")
+  vim.notify("start_pos: " .. vim.inspect(start_pos), vim.log.levels.INFO)
+  vim.notify("end_pos: " .. vim.inspect(end_pos), vim.log.levels.INFO)
   local start_line, start_col = start_pos[2] + 1, start_pos[3] + 1
   local end_line, end_col = end_pos[2] + 1, end_pos[3] + 1
 
@@ -268,6 +270,13 @@ end
 
 vim.api.nvim_create_user_command("AiderAddContext", append_selected_text_to_a_register, { nargs = 0 })
 
+-- clear_a_register
+local function clear_a_register()
+  vim.fn.setreg("a", "")
+end
+
+vim.api.nvim_create_user_command("AiderClearContext", clear_a_register, { nargs = 0 })
+
 return {
   open_selected_text_in_vsplit = open_selected_or_yanked_text_in_vsplit,
   toggle_ai_model = ToggleAIModel,
@@ -279,4 +288,5 @@ return {
   aider_add_comments_35 = aider_add_comments_35,
   aider_fix_diagnostic_line = aider_fix_diagnostic_line,
   aider_add_context = append_selected_text_to_a_register,
+  aider_clear_context = clear_a_register,
 }
