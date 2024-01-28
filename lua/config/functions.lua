@@ -44,8 +44,8 @@ end
 
 local function ToggleAIModel()
   if vim.g.ai_model == "gpt-3.5-turbo-16k" then
-    vim.g.ai_model = "gpt-4"
-    vim.notify("AI model set to gpt-4", "INFO", {})
+    vim.g.ai_model = "gpt-4-1106-preview"
+    vim.notify("AI model set to gpt-4 turbo", "INFO", {})
   else
     vim.g.ai_model = "gpt-3.5-turbo-16k"
     vim.notify("AI model set to gpt-3.5-turbo", "INFO", {})
@@ -111,6 +111,64 @@ end
 
 vim.api.nvim_create_user_command("OpenTerminalInFileDir", open_terminal_in_file_dir, { nargs = 0 })
 
+function reload_buffer()
+  local temp_sync_value = vim.g.aider_buffer_sync
+  vim.g.aider_buffer_sync = 0
+  vim.api.nvim_exec2("e!", { output = false })
+  vim.g.aider_buffer_sync = temp_sync_value
+end
+
+vim.api.nvim_create_user_command("ReloadBuffer", reload_buffer, { nargs = 0 })
+
+-- Gets the path of the current file from the current working directory
+-- and copies it to the clipboard
+local function aider_add_comments_35()
+  -- Get the current file's path
+  local file_path = vim.fn.expand("%:p")
+  -- Remove the current working directory from the path
+  file_path = file_path:gsub(vim.fn.getcwd(), "")
+  -- Remove the first character from the path (a forward slash)
+  file_path = file_path:sub(2)
+
+  -- Copy the path to the clipboard
+  vim.fn.setreg("+", file_path)
+  -- Notify the user
+  vim.notify("" .. file_path, "INFO", {})
+  -- Pass the file path to Aider
+  require("aider").AiderBackground(
+    "--model=gpt-3.5-turbo " .. file_path .. "",
+    "add documentation comments to all structs, functions, etc that are missing them"
+  )
+end
+
+vim.api.nvim_create_user_command("AiderAddComments", aider_add_comments_35, { nargs = 0 })
+
+-- Gets the diagnostics message for the current line and copies it to the clipboard
+-- and then passes it to Aider with the prompt "Please fix the following issue: "
+-- (and the diagnostics message)
+local function aider_fix_diagnostic_line()
+  -- Get the diagnostics messages for the current line
+  local diagnostics = vim.diagnostic.get(0, { lnum = vim.api.nvim_win_get_cursor(0)[1] - 1 })
+  local diagnostics_message = ""
+  -- Concatenate all diagnostic messages into a single string
+  for i, diagnostic in ipairs(diagnostics) do
+    diagnostics_message = diagnostics_message .. diagnostic.message
+    if i < #diagnostics then
+      diagnostics_message = diagnostics_message .. "\n" -- Add a newline between messages if there are multiple
+    end
+  end
+  -- Copy the diagnostics message to the clipboard
+  vim.fn.setreg("+", diagnostics_message)
+  -- Set the prompt
+  local prompt = "Please fix the following issue: " .. diagnostics_message
+  -- Show the user the prompt
+  vim.notify(prompt, vim.log.levels.INFO)
+  -- Pass the diagnostics message to Aider
+  require("aider").AiderBackground("--model=gpt-4-turbo-preview", prompt)
+end
+
+vim.api.nvim_create_user_command("AiderFixDiagnosticLine", aider_fix_diagnostic_line, { nargs = 0 })
+
 return {
   open_selected_text_in_vsplit = open_selected_or_yanked_text_in_vsplit,
   toggle_ai_model = ToggleAIModel,
@@ -118,4 +176,7 @@ return {
   set_ai_context_i = SetAIContextI,
   delete_buffer_if_empty = delete_buffer_if_empty,
   open_terminal_in_file_dir = open_terminal_in_file_dir,
+  reload_buffers = reload_buffer,
+  aider_add_comments_35 = aider_add_comments_35,
+  aider_fix_diagnostic_line = aider_fix_diagnostic_line,
 }

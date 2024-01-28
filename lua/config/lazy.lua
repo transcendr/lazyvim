@@ -24,6 +24,8 @@ require("lazy").setup({
         -- add tsx and treesitter
         vim.list_extend(opts.ensure_installed, {
           "python",
+          "go",
+          "typescript",
         })
       end,
     },

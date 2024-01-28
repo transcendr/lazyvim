@@ -107,5 +107,40 @@ vim.keymap.set(
   { noremap = true, silent = true, desc = "Run :Neorg workspace" }
 )
 
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader>be",
+  "<cmd>lua require('config.functions').reload_buffer()<CR>",
+  { noremap = true, silent = true }
+)
+
+-- Conver the below to a keymap
+-- {
+--   "<leader>acd",
+--   '<cmd>lua AiderBackground("--model=gpt-3.5-turbo", "add documentation comments to all structs, functions, etc that are missing them")<CR>',
+--   desc = "[A]ider [C]omment [D]ocumentation (3.5t, bg)",
+--   -- adds documentation comments to all structs, functions, etc that are missing them on the current buffer
+-- },
+
+-- ####### AIDER KEYMAPS #######
+
+--  Add documentation comments to all structs, functions, etc that are missing them on the current buffer
+-- aider_add_comments_35
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader>acd",
+  "<cmd>lua require('config.functions').aider_add_comments_35()<CR>",
+  { noremap = true, silent = true }
+)
+
+-- Fix the diagnostic line
+-- aider_fix_diagnostic_line
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader>adl",
+  "<cmd>lua require('config.functions').aider_fix_diagnostic_line()<CR>",
+  { noremap = true, silent = true, desc = "[A]ider Fix the [D]iagnostic [L]ine" }
+)
+
 -- Run "let @+=@:" when pressing <leader><C-y>
 -- vim.keymap.set("n", "<leader><C-y>", "let @+=@:", { noremap = true, silent = true, desc = "Run let @+=@:" })

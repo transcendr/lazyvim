@@ -3,5 +3,5 @@
 -- Add any additional options here
 vim.opt.winbar = "%=%m %f"
 vim.g.ai_timeout = 30
-vim.g.ai_model = "gpt-3.5-turbo"
+vim.g.ai_model = "gpt-4-turbo-preview"
 vim.g.ai_indicator_style = "virtual_text"
