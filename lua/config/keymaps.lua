@@ -159,5 +159,13 @@ vim.api.nvim_set_keymap(
   { noremap = true, silent = true, desc = "[A]ider [C]ontext [C]lear" }
 )
 
+-- aider_prompt_with_context
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader>acp",
+  "<cmd>lua require('config.functions').aider_prompt_with_context()<CR>",
+  { noremap = true, silent = true, desc = "[A]ider [C]ontext [P]rompt" }
+)
+
 -- Run "let @+=@:" when pressing <leader><C-y>
 -- vim.keymap.set("n", "<leader><C-y>", "let @+=@:", { noremap = true, silent = true, desc = "Run let @+=@:" })

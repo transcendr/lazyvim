@@ -15,6 +15,40 @@
 --   split:unmount()
 -- end)
 
+local function buf_text()
+  local bufnr = vim.api.nvim_win_get_buf(0)
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, vim.api.nvim_buf_line_count(bufnr), true)
+  local text = ""
+  for i, line in ipairs(lines) do
+    text = text .. line .. "\n"
+  end
+  return text
+end
+
+local function replace_buf_lines(bufnr, lines)
+  return vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+end
+
+local function buf_vtext()
+  local a_orig = vim.fn.getreg("a")
+  local mode = vim.fn.mode()
+  if mode ~= "v" and mode ~= "V" then
+    vim.cmd([[normal! gv]])
+  end
+  vim.cmd([[silent! normal! "aygv]])
+  local text = vim.fn.getreg("a")
+  vim.fn.setreg("a", a_orig)
+  return text
+end
+
+local function buf_text_or_vtext()
+  local mode = vim.fn.mode()
+  if mode == "v" or mode == "V" then
+    return buf_vtext()
+  end
+  return buf_text()
+end
+
 local function open_selected_or_yanked_text_in_vsplit()
   -- Get the selected text or the most recently yanked text
   local start_line, end_line = vim.fn.getpos("'<")[2], vim.fn.getpos("'>")[2]
@@ -211,6 +245,25 @@ end
 
 vim.api.nvim_create_user_command("AiderFixDiagnosticLine", aider_fix_diagnostic_line, { nargs = 0 })
 
+-- Prompts the user for a message and then sends it to Aider along with context from
+-- the 'a' register (if there is any)
+local function aider_prompt_with_context()
+  -- Prompt the user for a message
+  local message = vim.fn.input("Message: ")
+
+  local current_a_register = vim.fn.getreg("a")
+
+  -- Prepare the text to send to Aider
+  local register_text = message .. "\n------------------------------------\n" .. current_a_register
+
+  vim.notify(register_text, vim.log.levels.INFO)
+
+  -- Pass the text to Aider
+  require("aider").AiderBackground("--model=gpt-4-turbo-preview", register_text)
+end
+
+vim.api.nvim_create_user_command("AiderPromptWithContext", aider_prompt_with_context, { nargs = 0 })
+
 -- Gets the currently selected text and appends it the the "a" register
 -- with the current file path (with cwd stripped away) and the current line number, in the format:
 -- ------------------------------------
@@ -219,78 +272,6 @@ vim.api.nvim_create_user_command("AiderFixDiagnosticLine", aider_fix_diagnostic_
 -- <selected_text>
 -- ------------------------------------
 -- <new_line>
--- local function append_selected_text_to_a_register()
---   -- Get the current file's path
---   local file_path = vim.fn.expand("%:p"):gsub(vim.fn.getcwd(), ""):sub(2)
---
---   -- Get the start and end positions of the selected text
---   local start_pos = vim.fn.getpos("'<")
---   local end_pos = vim.fn.getpos("'>")
---
---   -- Get the start and end lines (corrected range)
---   local start_line = start_pos[2]
---   local end_line = end_pos[2] -- Use end_pos[2] directly for correct range
---
---   -- Get the selected lines (corrected range for inclusivity)
---   local selected_lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, true)
---
---   -- Convert the table of lines into a single string
---   local selected_text = table.concat(selected_lines, "\n")
---
---   -- Get the current content of the "a" register
---   local current_a_register = vim.fn.getreg("a")
---
---   -- Prepare the text for the "a" register
---   local register_text = current_a_register
---     .. "\n------------------------------------\n"
---     .. file_path
---     .. ":"
---     .. start_line
---     .. "\n------------------------------------\n"
---     .. selected_text
---     .. "\n------------------------------------\n"
---
---   -- Set the "a" register with the new content
---   vim.fn.setreg("a", register_text)
---
---   -- Provide user feedback (optional)
---   vim.notify("Selected text appended to 'a' register", vim.log.levels.INFO)
---   vim.notify(register_text, vim.log.levels.INFO)
--- end
-local function buf_text()
-  local bufnr = vim.api.nvim_win_get_buf(0)
-  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, vim.api.nvim_buf_line_count(bufnr), true)
-  local text = ""
-  for i, line in ipairs(lines) do
-    text = text .. line .. "\n"
-  end
-  return text
-end
-
-local function replace_buf_lines(bufnr, lines)
-  return vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-end
-
-local function buf_vtext()
-  local a_orig = vim.fn.getreg("a")
-  local mode = vim.fn.mode()
-  if mode ~= "v" and mode ~= "V" then
-    vim.cmd([[normal! gv]])
-  end
-  vim.cmd([[silent! normal! "aygv]])
-  local text = vim.fn.getreg("a")
-  vim.fn.setreg("a", a_orig)
-  return text
-end
-
-local function buf_text_or_vtext()
-  local mode = vim.fn.mode()
-  if mode == "v" or mode == "V" then
-    return buf_vtext()
-  end
-  return buf_text()
-end
-
 local function append_selected_text_to_a_register()
   -- Get the current file's path
   local file_path = vim.fn.expand("%:p"):gsub(vim.fn.getcwd(), ""):sub(2)
@@ -336,6 +317,8 @@ end
 
 vim.api.nvim_create_user_command("AiderClearContext", clear_a_register, { nargs = 0 })
 
+--
+
 return {
   open_selected_text_in_vsplit = open_selected_or_yanked_text_in_vsplit,
   toggle_ai_model = ToggleAIModel,
@@ -348,4 +331,5 @@ return {
   aider_fix_diagnostic_line = aider_fix_diagnostic_line,
   aider_add_context = append_selected_text_to_a_register,
   aider_clear_context = clear_a_register,
+  aider_prompt_with_context = aider_prompt_with_context,
 }
