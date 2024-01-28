@@ -222,25 +222,45 @@ local function append_selected_text_to_a_register()
   file_path = file_path:gsub(vim.fn.getcwd(), "")
   -- Remove the first character from the path (a forward slash)
   file_path = file_path:sub(2)
+
   -- Get the start and end positions of the selected text
   local start_pos = vim.fn.getpos("'<")
   local end_pos = vim.fn.getpos("'>")
-  local start_line, start_col = start_pos[2], start_pos[3]
-  local end_line, end_col = end_pos[2], end_pos[3]
-  -- Get the selected text
-  local selected_lines = vim.fn.getline(start_line, end_line)
-  if #selected_lines == 1 then
-    -- If selection is within a single line, extract the substring
-    selected_lines[1] = string.sub(selected_lines[1], start_col, end_col - 1)
-  else
-    -- Adjust the first and last line to include only the selected portion
-    selected_lines[1] = string.sub(selected_lines[1], start_col)
-    selected_lines[#selected_lines] = string.sub(selected_lines[#selected_lines], 1, end_col - 1)
+  local start_line, start_col = start_pos[2], start_pos[4] + 1
+  local end_line, end_col = end_pos[2], end_pos[4] + 1
+
+  -- Adjust end position if it's at the start of a line
+  if end_col == 1 then
+    end_line = end_line - 1
+    end_col = -1 -- This will get the entire last line
   end
+
+  -- Get the selected text
+  local selected_lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
+
+  -- Check if the selected_lines table is not empty
+  if #selected_lines > 0 then
+    -- Adjust the first and last line to include only the selected portion
+    if start_line == end_line then
+      -- Single line selection
+      selected_lines[1] = string.sub(selected_lines[1], start_col, end_col)
+    else
+      -- Multiline selection
+      selected_lines[1] = string.sub(selected_lines[1], start_col)
+      if end_col == -1 then
+        selected_lines[#selected_lines] = selected_lines[#selected_lines]
+      else
+        selected_lines[#selected_lines] = string.sub(selected_lines[#selected_lines], 1, end_col)
+      end
+    end
+  end
+
   -- Convert the table of lines into a single string
   local selected_text = table.concat(selected_lines, "\n")
-  -- Get what is currently in the a register
+
+  -- Get what is currently in the "a" register
   local a_register = vim.fn.getreg("a")
+
   -- Prepare the text
   local register_text = a_register
     .. "\n------------------------------------\n"
@@ -250,9 +270,12 @@ local function append_selected_text_to_a_register()
     .. "\n------------------------------------\n"
     .. selected_text
     .. "\n------------------------------------\n"
-  vim.notify(register_text, vim.log.levels.INFO)
-  -- Append the selected text to the a register
+
+  -- Append the selected text to the "a" register
   vim.fn.setreg("a", register_text)
+
+  -- Notify with the selected text
+  vim.notify(register_text, vim.log.levels.INFO)
 end
 
 vim.api.nvim_create_user_command("AiderAddContext", append_selected_text_to_a_register, { nargs = 0 })
