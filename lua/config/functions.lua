@@ -147,8 +147,12 @@ vim.api.nvim_create_user_command("AiderAddComments", aider_add_comments_35, { na
 -- and then passes it to Aider with the prompt "Please fix the following issue: "
 -- (and the diagnostics message)
 local function aider_fix_diagnostic_line()
-  -- Get the diagnostics messages for the current line
+  -- Get the diagnostics messages for the current line and check if it's not nil or empty
   local diagnostics = vim.diagnostic.get(0, { lnum = vim.api.nvim_win_get_cursor(0)[1] - 1 })
+  if diagnostics == nil or #diagnostics == 0 then
+    vim.notify("No diagnostics found for the current line.", vim.log.levels.INFO)
+    return
+  end
   local diagnostics_message = ""
   -- Concatenate all diagnostic messages into a single string
   for i, diagnostic in ipairs(diagnostics) do
