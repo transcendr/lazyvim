@@ -157,12 +157,38 @@ local function aider_fix_diagnostic_line()
       diagnostics_message = diagnostics_message .. "\n" -- Add a newline between messages if there are multiple
     end
   end
+  -- Get the diagnostics type (error, warning, etc)
+  local diagnostics_type = diagnostics[1].severity
+
+  -- Get the current file and strip away the current working directory
+  local file_path = vim.fn.expand("%:p")
+  file_path = file_path:gsub(vim.fn.getcwd(), "")
+  file_path = file_path:sub(2)
+
+  --- Get the current line number
+  local line_number = vim.api.nvim_win_get_cursor(0)[1]
+
   -- Copy the diagnostics message to the clipboard
   vim.fn.setreg("+", diagnostics_message)
   -- Set the prompt
-  local prompt = "Please fix the following issue: " .. diagnostics_message
+  local prompt = "Address the following diaognstics issue which starts on line '"
+    .. line_number
+    .. "' in '"
+    .. file_path
+    .. ".\nDo not generate ANY additional text/commentary/explanation for humans. this raw response will never be seen by a human."
+    .. "\nNever use placeholders, always generate full, complete and concise code. There is no human to fix/complete it, therefore ensure your work is 100% complete: "
+    .. "\n'''\n"
+    .. diagnostics_type
+    .. ": "
+    .. diagnostics_message
+    .. "\n'''"
+
+  -- excape the diagnostics message
+  diagnostics_message = diagnostics_message:gsub("'", "\\'")
+
   -- Show the user the prompt
   vim.notify(prompt, vim.log.levels.INFO)
+
   -- Pass the diagnostics message to Aider
   require("aider").AiderBackground("--model=gpt-4-turbo-preview", prompt)
 end
