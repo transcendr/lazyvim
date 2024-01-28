@@ -169,8 +169,12 @@ local function aider_fix_diagnostic_line()
   --- Get the current line number
   local line_number = vim.api.nvim_win_get_cursor(0)[1]
 
+  -- Get what is currently in the a register
+  local a_register = vim.fn.getreg("a")
+
   -- Copy the diagnostics message to the clipboard
   vim.fn.setreg("+", diagnostics_message)
+
   -- Set the prompt
   local prompt = "Address the following diaognstics issue which starts on line '"
     .. line_number
@@ -183,6 +187,10 @@ local function aider_fix_diagnostic_line()
     .. ": "
     .. diagnostics_message
     .. "\n'''"
+  -- from a register
+  if a_register ~= "" then
+    prompt = prompt .. "\n\n Additional information:\n'''\n" .. a_register .. "\n'''"
+  end
 
   -- excape the diagnostics message
   diagnostics_message = diagnostics_message:gsub("'", "\\'")
@@ -190,11 +198,64 @@ local function aider_fix_diagnostic_line()
   -- Show the user the prompt
   vim.notify(prompt, vim.log.levels.INFO)
 
+  -- Clear out the a register
+  vim.fn.setreg("a", "")
+
   -- Pass the diagnostics message to Aider
   require("aider").AiderBackground("--model=gpt-4-turbo-preview", prompt)
 end
 
 vim.api.nvim_create_user_command("AiderFixDiagnosticLine", aider_fix_diagnostic_line, { nargs = 0 })
+
+-- Gets the currently selected text and appends it the the "a" register
+-- with the current file path (with cwd stripped away) and the current line number, in the format:
+-- ------------------------------------
+-- <file_path>:<line_number>
+-- ------------------------------------
+-- <selected_text>
+-- ------------------------------------
+-- <new_line>
+local function append_selected_text_to_a_register()
+  -- Get the current file's path
+  local file_path = vim.fn.expand("%:p")
+  -- Remove the current working directory from the path
+  file_path = file_path:gsub(vim.fn.getcwd(), "")
+  -- Remove the first character from the path (a forward slash)
+  file_path = file_path:sub(2)
+  -- Get the start and end positions of the selected text
+  local start_pos = vim.fn.getpos("'<")
+  local end_pos = vim.fn.getpos("'>")
+  local start_line, start_col = start_pos[2], start_pos[3]
+  local end_line, end_col = end_pos[2], end_pos[3]
+  -- Get the selected text
+  local selected_lines = vim.fn.getline(start_line, end_line)
+  if #selected_lines == 1 then
+    -- If selection is within a single line, extract the substring
+    selected_lines[1] = string.sub(selected_lines[1], start_col, end_col - 1)
+  else
+    -- Adjust the first and last line to include only the selected portion
+    selected_lines[1] = string.sub(selected_lines[1], start_col)
+    selected_lines[#selected_lines] = string.sub(selected_lines[#selected_lines], 1, end_col - 1)
+  end
+  -- Convert the table of lines into a single string
+  local selected_text = table.concat(selected_lines, "\n")
+  -- Get what is currently in the a register
+  local a_register = vim.fn.getreg("a")
+  -- Prepare the text
+  local register_text = a_register
+    .. "\n------------------------------------\n"
+    .. file_path
+    .. ":"
+    .. start_line
+    .. "\n------------------------------------\n"
+    .. selected_text
+    .. "\n------------------------------------\n"
+  vim.notify(register_text, vim.log.levels.INFO)
+  -- Append the selected text to the a register
+  vim.fn.setreg("a", register_text)
+end
+
+vim.api.nvim_create_user_command("AiderAddContext", append_selected_text_to_a_register, { nargs = 0 })
 
 return {
   open_selected_text_in_vsplit = open_selected_or_yanked_text_in_vsplit,
@@ -206,4 +267,5 @@ return {
   reload_buffers = reload_buffer,
   aider_add_comments_35 = aider_add_comments_35,
   aider_fix_diagnostic_line = aider_fix_diagnostic_line,
+  aider_add_context = append_selected_text_to_a_register,
 }

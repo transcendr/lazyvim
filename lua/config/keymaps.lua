@@ -142,5 +142,14 @@ vim.api.nvim_set_keymap(
   { noremap = true, silent = true, desc = "[A]ider Fix the [D]iagnostic [L]ine" }
 )
 
+-- aider_add_context
+vim.api.nvim_set_keymap(
+  --"n", not normal mode, select mode
+  "v",
+  "<leader>aca",
+  "<cmd>lua require('config.functions').aider_add_context()<CR>",
+  { noremap = true, silent = true, desc = "[A]ider [C]ontext [A]ppend" }
+)
+
 -- Run "let @+=@:" when pressing <leader><C-y>
 -- vim.keymap.set("n", "<leader><C-y>", "let @+=@:", { noremap = true, silent = true, desc = "Run let @+=@:" })
