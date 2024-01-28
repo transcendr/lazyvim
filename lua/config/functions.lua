@@ -293,6 +293,7 @@ end
 
 local function append_selected_text_to_a_register()
   -- Get the current file's path
+  -- TODO: fix this issue and remove this comment
   local file_path = vim.fn.expand("%:p"):gsub(vim.fn.getcwd(), ""):sub(2)
 
   -- Get the start and end positions of the selected text
