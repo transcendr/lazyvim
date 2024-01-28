@@ -297,6 +297,10 @@ local function append_selected_text_to_a_register()
 
   -- Get the start and end positions of the selected text
   local start_pos = vim.fn.getpos("'<")
+  if start_pos == nil then
+    vim.notify("No position found for selected text.", vim.log.levels.WARN)
+    return
+  end
 
   -- Get the start and end lines (corrected range)
   local start_line = start_pos[2]
