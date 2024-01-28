@@ -158,10 +158,8 @@ local function aider_fix_diagnostic_line()
     end
   end
 
-  -- TODO: Currently the below line returns a number like 1, 2, 3, 4, etc but I want it to return the string "error", "warning", "info", etc
-  -- instead. Fix this so that it does that.
-  -- Get the diagnostics type (error, warning, etc)
-  --local diagnostics_type = diagnostics[1].severity
+  -- Get the diagnostics type (error, warning, info, etc) as a string
+  local diagnostics_type = vim.diagnostic.severity[diagnostics[1].severity]
 
   -- Get the current file and strip away the current working directory
   local file_path = vim.fn.expand("%:p")
