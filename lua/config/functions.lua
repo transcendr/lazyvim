@@ -219,52 +219,103 @@ vim.api.nvim_create_user_command("AiderFixDiagnosticLine", aider_fix_diagnostic_
 -- <selected_text>
 -- ------------------------------------
 -- <new_line>
+-- local function append_selected_text_to_a_register()
+--   -- Get the current file's path
+--   local file_path = vim.fn.expand("%:p"):gsub(vim.fn.getcwd(), ""):sub(2)
+--
+--   -- Get the start and end positions of the selected text
+--   local start_pos = vim.fn.getpos("'<")
+--   local end_pos = vim.fn.getpos("'>")
+--
+--   -- Get the start and end lines (corrected range)
+--   local start_line = start_pos[2]
+--   local end_line = end_pos[2] -- Use end_pos[2] directly for correct range
+--
+--   -- Get the selected lines (corrected range for inclusivity)
+--   local selected_lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, true)
+--
+--   -- Convert the table of lines into a single string
+--   local selected_text = table.concat(selected_lines, "\n")
+--
+--   -- Get the current content of the "a" register
+--   local current_a_register = vim.fn.getreg("a")
+--
+--   -- Prepare the text for the "a" register
+--   local register_text = current_a_register
+--     .. "\n------------------------------------\n"
+--     .. file_path
+--     .. ":"
+--     .. start_line
+--     .. "\n------------------------------------\n"
+--     .. selected_text
+--     .. "\n------------------------------------\n"
+--
+--   -- Set the "a" register with the new content
+--   vim.fn.setreg("a", register_text)
+--
+--   -- Provide user feedback (optional)
+--   vim.notify("Selected text appended to 'a' register", vim.log.levels.INFO)
+--   vim.notify(register_text, vim.log.levels.INFO)
+-- end
+local function buf_text()
+  local bufnr = vim.api.nvim_win_get_buf(0)
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, vim.api.nvim_buf_line_count(bufnr), true)
+  local text = ""
+  for i, line in ipairs(lines) do
+    text = text .. line .. "\n"
+  end
+  return text
+end
+
+local function replace_buf_lines(bufnr, lines)
+  return vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+end
+
+local function buf_vtext()
+  local a_orig = vim.fn.getreg("a")
+  local mode = vim.fn.mode()
+  if mode ~= "v" and mode ~= "V" then
+    vim.cmd([[normal! gv]])
+  end
+  vim.cmd([[silent! normal! "aygv]])
+  local text = vim.fn.getreg("a")
+  vim.fn.setreg("a", a_orig)
+  return text
+end
+
+local function buf_text_or_vtext()
+  local mode = vim.fn.mode()
+  if mode == "v" or mode == "V" then
+    return buf_vtext()
+  end
+  return buf_text()
+end
+
 local function append_selected_text_to_a_register()
   -- Get the current file's path
   local file_path = vim.fn.expand("%:p"):gsub(vim.fn.getcwd(), ""):sub(2)
 
   -- Get the start and end positions of the selected text
   local start_pos = vim.fn.getpos("'<")
-  local end_pos = vim.fn.getpos("'>")
-  vim.notify("start_pos: " .. vim.inspect(start_pos), vim.log.levels.INFO)
-  vim.notify("end_pos: " .. vim.inspect(end_pos), vim.log.levels.INFO)
-  local start_line, start_col = start_pos[2] + 1, start_pos[3] + 1
-  local end_line, end_col = end_pos[2] + 1, end_pos[3] + 1
 
-  -- Correct the end column for empty line selection
-  if end_col == 0 then
-    end_col = 1
-  end
+  -- Get the start and end lines (corrected range)
+  local start_line = start_pos[2]
 
-  -- Get the selected text
-  local selected_lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
+  local text = buf_text_or_vtext()
+  local current_a_register = vim.fn.getreg("a")
 
-  -- Adjust the text for partial line selections
-  if start_line == end_line then
-    selected_lines[1] = string.sub(selected_lines[1], start_col, end_col - 1)
-  else
-    selected_lines[1] = string.sub(selected_lines[1], start_col)
-    selected_lines[#selected_lines] = string.sub(selected_lines[#selected_lines], 1, end_col - 1)
-  end
-
-  -- Convert the table of lines into a single string
-  local selected_text = table.concat(selected_lines, "\n")
-
-  -- Get and prepare the text for the "a" register
-  local a_register = vim.fn.getreg("a")
-  local register_text = a_register
+  -- local register_text = current_a_register .. "\n" .. text
+  -- Prepare the text for the "a" register
+  local register_text = current_a_register
     .. "\n------------------------------------\n"
     .. file_path
     .. ":"
     .. start_line
     .. "\n------------------------------------\n"
-    .. selected_text
+    .. text
     .. "\n------------------------------------\n"
-
-  -- Append the selected text to the "a" register
   vim.fn.setreg("a", register_text)
-
-  -- Notify with the selected text
+  vim.notify('Selected text appended to "a" register', vim.log.levels.INFO)
   vim.notify(register_text, vim.log.levels.INFO)
 end
 
@@ -273,6 +324,10 @@ vim.api.nvim_create_user_command("AiderAddContext", append_selected_text_to_a_re
 -- clear_a_register
 local function clear_a_register()
   vim.fn.setreg("a", "")
+  vim.notify("Cleared the a register", vim.log.levels.INFO)
+  -- show the contents of the a register
+  local contents = vim.fn.getreg("a")
+  vim.notify(contents, vim.log.levels.INFO)
 end
 
 vim.api.nvim_create_user_command("AiderClearContext", clear_a_register, { nargs = 0 })
