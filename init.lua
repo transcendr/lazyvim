@@ -24,6 +24,27 @@ require("flutter-tools").setup({
       }
     end,
   },
+  widget_guides = {
+    enabled = false,
+  },
+  dev_tools = {
+    autostart = true, -- autostart devtools server if not detected
+    auto_open_browser = true, -- Automatically opens devtools in the browser
+  },
+  outline = {
+    open_cmd = "50vnew", -- command to use to open the outline buffer
+    auto_open = true, -- if true this will open the outline automatically when it is first populated
+  },
+  -- see the link below for details on each option:
+  -- https://github.com/dart-lang/sdk/blob/master/pkg/analysis_server/tool/lsp_spec/README.md#client-workspace-configuration
+  settings = {
+    showTodos = true,
+    completeFunctionCalls = true,
+    analysisExcludedFolders = { "packages/" },
+    renameFilesWithClasses = "prompt", -- "always"
+    enableSnippets = true,
+    updateImportsOnRename = true, -- Whether to update imports and other directives when files are renamed. Required for `FlutterRename` command.
+  },
 }) -- use defaults
 
 -- NVR
