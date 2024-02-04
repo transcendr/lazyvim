@@ -26,6 +26,7 @@ require("lazy").setup({
           "python",
           "go",
           "typescript",
+          "dart",
         })
       end,
     },

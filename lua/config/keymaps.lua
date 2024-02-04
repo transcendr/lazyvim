@@ -158,10 +158,22 @@ vim.api.nvim_set_keymap(
   "<cmd>lua require('config.functions').aider_clear_context()<CR>",
   { noremap = true, silent = true, desc = "[A]ider [C]ontext [C]lear" }
 )
+vim.api.nvim_set_keymap(
+  "v",
+  "<leader>acc",
+  "<cmd>lua require('config.functions').aider_clear_context()<CR>",
+  { noremap = true, silent = true, desc = "[A]ider [C]ontext [C]lear" }
+)
 
 -- aider_prompt_with_context
 vim.api.nvim_set_keymap(
   "n",
+  "<leader>acp",
+  "<cmd>lua require('config.functions').aider_prompt_with_context()<CR>",
+  { noremap = true, silent = true, desc = "[A]ider [C]ontext [P]rompt" }
+)
+vim.api.nvim_set_keymap(
+  "v",
   "<leader>acp",
   "<cmd>lua require('config.functions').aider_prompt_with_context()<CR>",
   { noremap = true, silent = true, desc = "[A]ider [C]ontext [P]rompt" }
