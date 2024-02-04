@@ -1,3 +1,13 @@
+-- local nnoremap = require("config.keymap_utils").nnoremap
+local vnoremap = require("config.keymap_utils").vnoremap
+-- local inoremap = require("user.keymap_utils").inoremap
+local tnoremap = require("config.keymap_utils").tnoremap
+local xnoremap = require("config.keymap_utils").xnoremap
+-- local harpoon_ui = require("harpoon.ui")
+-- local harpoon_mark = require("harpoon.mark")
+-- local illuminate = require("illuminate")
+-- local utils = require("user.utils")
+
 -- Keymaps are automatically loaded on the VeryLazy event
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
@@ -122,6 +132,16 @@ vim.api.nvim_set_keymap(
 --   -- adds documentation comments to all structs, functions, etc that are missing them on the current buffer
 -- },
 
+-- ####### COPILOT KEYMAPS #######
+
+-- Open Copilot panel
+vim.api.nvim_set_keymap(
+  "n",
+  "<leader>oc",
+  "<cmd>lua require('copilot.panel').open({})<CR>",
+  { noremap = true, silent = true, desc = "[O]pen [C]opilot panel" }
+)
+
 -- ####### AIDER KEYMAPS #######
 
 --  Add documentation comments to all structs, functions, etc that are missing them on the current buffer
@@ -178,6 +198,44 @@ vim.api.nvim_set_keymap(
   "<cmd>lua require('config.functions').aider_prompt_with_context()<CR>",
   { noremap = true, silent = true, desc = "[A]ider [C]ontext [P]rompt" }
 )
+
+-- Paste without losing the contents of the register
+xnoremap("<leader>p", '"_dP')
+
+-- Delete with 'x' without losing the contents of the register
+xnoremap("x", '"_x')
+
+-- Move selected text up/down in visual mode
+vnoremap("<A-j>", ":m '>+1<CR>gv=gv")
+vnoremap("<A-k>", ":m '<-2<CR>gv=gv")
+
+-- Reselect the last visual selection
+xnoremap("<<", function()
+  vim.cmd("normal! <<")
+  vim.cmd("normal! gv")
+end)
+
+xnoremap(">>", function()
+  vim.cmd("normal! >>")
+  vim.cmd("normal! gv")
+end)
+
+-- Terminal --
+-- Enter normal mode while in a terminal
+tnoremap("<esc>", [[<C-\><C-n>]])
+tnoremap("jj", [[<C-\><C-n>]])
+
+-- Window navigation from terminal
+tnoremap("<C-h>", [[<Cmd>wincmd h<CR>]])
+tnoremap("<C-j>", [[<Cmd>wincmd j<CR>]])
+tnoremap("<C-k>", [[<Cmd>wincmd k<CR>]])
+tnoremap("<C-l>", [[<Cmd>wincmd l<CR>]])
+
+-- Reenable default <space> functionality to prevent input delay
+tnoremap("<space>", "<space>")
+
+-- Get out of visual selection with a single 'v' press
+xnoremap("v", "<esc>zz")
 
 -- Run "let @+=@:" when pressing <leader><C-y>
 -- vim.keymap.set("n", "<leader><C-y>", "let @+=@:", { noremap = true, silent = true, desc = "Run let @+=@:" })
