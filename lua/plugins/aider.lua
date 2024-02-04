@@ -35,6 +35,12 @@ return {
         desc = "[A]ider [G]it [C]ommit (4t, bg)",
         -- generates a commit message for all uncommitted changes and commits them
       },
+      {
+        "<leader>agp",
+        "<cmd>lua AiderBackground('--model=gpt-4-1106-preview', '/run git push')<cr>",
+        desc = "[A]ider [G]it [P]ush (4t, bg)",
+        -- generates a commit message for all uncommitted changes and commits them
+      },
       -- {
       --   "<leader>acd",
       --   '<cmd>lua AiderBackground("--model=gpt-3.5-turbo", "add documentation comments to all structs, functions, etc that are missing them")<CR>',
