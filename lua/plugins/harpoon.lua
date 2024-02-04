@@ -62,7 +62,34 @@ return {
         end,
         desc = "Harpoon buffer 4",
       },
-
+      {
+        "<leader>,j",
+        function()
+          harpoon:list():select(5)
+        end,
+        desc = "Harpoon buffer 5",
+      },
+      {
+        "<leader>,k",
+        function()
+          harpoon:list():select(6)
+        end,
+        desc = "Harpoon buffer 6",
+      },
+      {
+        "<leader>,l",
+        function()
+          harpoon:list():select(7)
+        end,
+        desc = "Harpoon buffer 7",
+      },
+      {
+        "<leader>,;",
+        function()
+          harpoon:list():select(8)
+        end,
+        desc = "Harpoon buffer 8",
+      },
       -- Harpoon next and previous.
       {
         "<leader>n",
