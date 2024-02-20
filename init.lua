@@ -52,3 +52,7 @@ require("flutter-tools").setup({
 if vim.fn.executable("nvr") == 1 then
   vim.env.GIT_EDITOR = "nvr --remote-tab-wait +'set bufhidden=delete'"
 end
+
+-- Speed opts
+-- toggles treesitter context to start and user <leader>ut to toggle it manually on
+require("treesitter-context").toggle()
